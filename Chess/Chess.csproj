@@ -42,8 +42,23 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ChessPieceHelper.cs" />
+    <Compile Include="ChessPiece\Bishop.cs" />
+    <Compile Include="ChessPiece\IBishop.cs" />
+    <Compile Include="ChessPiece\IRook.cs" />
+    <Compile Include="IRuleEngine.cs" />
+    <Compile Include="ChessPiece\King.cs" />
+    <Compile Include="ChessPiece\Knight.cs" />
+    <Compile Include="ChessPiece\Pawn.cs" />
+    <Compile Include="DataProvider.cs" />
+    <Compile Include="IDataProvider.cs" />
+    <Compile Include="IPhoneNumberFinder.cs" />
+    <Compile Include="PhoneChessBase.cs" />
+    <Compile Include="ChessPiece\Queen.cs" />
+    <Compile Include="ChessPiece\Rook.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="StateHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
