@@ -1,10 +1,12 @@
 ﻿using System;
+using Chess.DataProviders;
+using Chess.Helpers;
 
 namespace Chess
 {
     class Program
     {
-        static void Main(string[] args)
+        static void Main()
         {
             while (true)
             {
@@ -24,16 +26,19 @@ namespace Chess
                     }
 
                     var chessPiece = ChessPieceHelper.GetChessTypeByName(input);
-                    IDataProvider dataProvider = new DataProvider();
                     var phoneNumberFinder =
-                        ChessPieceHelper.GetPhoneNumberFinderByChessPieceType(chessPiece, dataProvider);
+                        ChessPieceHelper.GetPhoneNumberFinderByChessPieceType(chessPiece);
 
                     var currentForegroundColor = Console.ForegroundColor;
                     if (phoneNumberFinder != null)
                     {
                         Console.ForegroundColor = ConsoleColor.Green;
-                        Console.WriteLine("Total no. of {0} digit phone numbers for {1} are: {2}", dataProvider.Length, input,
-                            phoneNumberFinder.FindNumberOfPaths(10));
+
+                        //Default Inputs
+                       IDataProvider dataProvider = new DataProvider();
+
+                        Console.WriteLine("Total no. of {0} digit phone numbers for {1} are: {2}", dataProvider.PhoneLength, input, 
+                            phoneNumberFinder.FindAllNumberOfPaths(dataProvider.PhoneMatrix, dataProvider.PhoneLength));
                     }
                     else
                     {

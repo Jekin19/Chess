@@ -2,7 +2,9 @@
 namespace Chess
 {
     public interface IPhoneNumberFinder
-    {
-        decimal FindNumberOfPaths(int phoneLength = 7);
+    {   
+        int FindNumberOfPaths(string[,] phoneMatrix, int phoneLength, string startingDigit);
+
+        int FindAllNumberOfPaths(string[,] phoneMatrix, int phoneLength);
     }
 }

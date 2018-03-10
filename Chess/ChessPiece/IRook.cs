@@ -4,6 +4,6 @@ namespace Chess.ChessPiece
 {
     public interface IRook
     {
-        HashSet<string> GetState(int row, int col);
+        HashSet<string> GetMyState(int row, int col, string[,] phoneMatrix, IRuleEngine ruleEngine);
     }
 }

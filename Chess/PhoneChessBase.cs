@@ -1,62 +1,40 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Globalization;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace Chess
 {
     public abstract class PhoneChessBase : IRuleEngine
     {
-        private readonly IDataProvider _dataProvider;
-
-        protected string[,] PhoneMatrix => _dataProvider?.PhoneMatrix;
-
-        protected int RowSize => PhoneMatrix.GetUpperBound(0)+1;
-
-        protected int ColSize => PhoneMatrix.GetUpperBound(1)+1;
-
-        private ConcurrentDictionary<string, HashSet<string>> _states;
-
-        private int? PhoneLength => _dataProvider?.Length;
-
-        protected PhoneChessBase(IDataProvider dataProvider)
-        {
-            _dataProvider = dataProvider;
-        }
+        #region Members
+        
+        private readonly Dictionary<string, HashSet<string>> _states = new Dictionary<string, HashSet<string>>();
+        
+        #endregion   
 
         /**
          * Returns number of possible paths starting from given digit of size n
          *
-         * @param n     Path size
+         * @param phoneLength     Path size
          * @return Number of paths
          */
-        public decimal FindNumberOfPaths(int n )
+        public int FindAllNumberOfPaths(string[,] phoneMatrix, int phoneLength)
         {
             try
             {
-                Console.WriteLine(DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss.fff",
-                    CultureInfo.InvariantCulture));
-                var phoneLength = PhoneLength ?? n; 
-                List<Task<int>> taskList = new List<Task<int>>();
-                decimal totalCount = 0;
-                _states = new ConcurrentDictionary<string, HashSet<string>>();
-                for (int i = 0; i < RowSize; i++)
-                {
-                    for (int j = 0; j < ColSize; j++)
+                int totalCount = 0;
+                if (phoneMatrix != null)
+                {  for (int i = 0; i <= phoneMatrix.GetUpperBound(0); i++)
                     {
-                        //var task = Task.Factory.StartNew(stateObject => FindPath((string)stateObject, phoneLength), PhoneMatrix[i, j]);
-                        //taskList.Add(task);
-                        totalCount = totalCount + FindPath(PhoneMatrix[i, j], phoneLength);
+                        for (int j = 0; j <= phoneMatrix.GetUpperBound(1); j++)
+                        {
+                            totalCount = totalCount + FindNumberOfPaths(phoneMatrix, phoneLength, phoneMatrix[i, j]);
+                        }
                     }
+
                 }
 
-                //Task.WaitAll(taskList.ToArray());
-                //taskList.ForEach(task => totalCount = totalCount + task.Result);
-                Console.WriteLine(DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss.fff",
-                    CultureInfo.InvariantCulture));
                 return totalCount;
             }
             catch (Exception exception)
@@ -65,6 +43,7 @@ namespace Chess
                 //log exception
                 return -1;
             }
+            
         }
 
         /**
@@ -74,10 +53,10 @@ namespace Chess
          * @param n     Path size
          * @return Number of paths
          */
-        protected int FindPath(string digit, int n)
+        public int FindNumberOfPaths(string[,] phoneMatrix, int phoneLength, string startingDigit)
         {
-
-            if (CanNotStartWith(digit) || CanNotContain(digit))
+            if (string.IsNullOrEmpty(startingDigit) || CanNotStartWith(startingDigit) || CanNotContain(startingDigit) || 
+                phoneLength < 1 || phoneMatrix == null)
             {
                 return 0;
             }
@@ -86,21 +65,21 @@ namespace Chess
             // start the flow from given digit
             Queue<Stack<string>> queue = new Queue<Stack<string>>();
             Stack<string> path = new Stack<string>();
-            path.Push(digit);
+            path.Push(startingDigit);
             queue.Enqueue(path);
 
             while (queue.Count > 0)
             {
                 path = queue.Dequeue();
 
-                if (path.Count == n && !results.Contains(path))
+                if (path.Count == phoneLength && !results.Contains(path))
                 {
                     results.Add(path);
                     continue;
                 }
 
                 string currentPathDigit = path.Peek();
-                HashSet<string> states = GetStates(currentPathDigit);
+                HashSet<string> states = GetStates(phoneMatrix, currentPathDigit);
                 if (states != null && states.Count > 0)
                 {
                     foreach (var state in states)
@@ -113,19 +92,8 @@ namespace Chess
                     }
                 }
             }
-
-            //foreach (var result in results)
-            //{
-            //    var temp = result.Reverse().ToList();
-            //    foreach (var res in temp)
-            //    {
-            //        Console.Write(res + " ");
-            //    }
-
-            //    Console.WriteLine();
-            //}
-
             return results.Count;
+         
         }
         
         /**
@@ -134,7 +102,7 @@ namespace Chess
          * @param digit Digit
          * @return All possible states
          */
-        protected HashSet<string> GetStates(string digit)
+        private HashSet<string> GetStates(string[,] phoneMatrix, string digit)
         {
             if (_states.ContainsKey(digit))
             {
@@ -143,11 +111,11 @@ namespace Chess
 
             int digitRow = -1;
             int digitCol = -1;
-            for (int row = 0; digitRow == -1 && row < RowSize; ++row)
+            for (int row = 0; digitRow == -1 && row <= phoneMatrix.GetUpperBound(0); ++row)
             {
-                for (int col = 0; digitCol == -1 && col < ColSize; ++col)
+                for (int col = 0; digitCol == -1 && col <= phoneMatrix.GetUpperBound(1); ++col)
                 {
-                    if (PhoneMatrix[row, col] == digit)
+                    if (phoneMatrix[row, col].Equals(digit))
                     {
                         digitRow = row;
                         digitCol = col;
@@ -156,8 +124,8 @@ namespace Chess
                 }
             }
 
-            HashSet<string> nextStates = GetNextState(digitRow, digitCol);
-            _states.TryAdd(digit, nextStates);
+            HashSet<string> nextStates = GetNextState(digitRow, digitCol, phoneMatrix, this);
+            _states.Add(digit, nextStates);
             return _states[digit];
         }
         
@@ -168,8 +136,9 @@ namespace Chess
          * @param col   Column index for the given digit
          * @return HashSet of possible states
          */
-        protected abstract HashSet<string> GetNextState(int row, int col);
+        protected abstract HashSet<string> GetNextState(int row, int col, string[,] phoneMatrix, IRuleEngine ruleEngine);
 
+        #region Rule Engine 
         public bool CanNotContain(string digit)
         {
             if (digit.Equals("*") || digit.Equals("#"))
@@ -182,11 +151,12 @@ namespace Chess
 
         public bool CanNotStartWith(string digit)
         {
-            //if (digit.Equals("0") || digit.Equals("1"))
-            //{
-            //    return true;
-            //}
+            if (digit.Equals("0") || digit.Equals("1"))
+            {
+                return true;
+            }
             return false;
         }
+        #endregion
     }
 }

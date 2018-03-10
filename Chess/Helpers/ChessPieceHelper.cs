@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using Chess.ChessPiece;
 
-namespace Chess
+namespace Chess.Helpers
 {
     public class ChessPieceHelper
     {
@@ -85,13 +85,12 @@ namespace Chess
             return ChessPieceType.None;
         }
 
-        public static IPhoneNumberFinder GetPhoneNumberFinderByChessPieceType(ChessPieceType chessPieceType,
-            IDataProvider dataProvider)
+        public static IPhoneNumberFinder GetPhoneNumberFinderByChessPieceType(ChessPieceType chessPieceType)
         {
             var type = GetChessPieceTypeAttribute(chessPieceType)?.Type;
             if (type != null)
             {
-                var phoneNumberFinder = Activator.CreateInstance(type, dataProvider) as IPhoneNumberFinder;
+                var phoneNumberFinder = Activator.CreateInstance(type) as IPhoneNumberFinder;
                 return phoneNumberFinder;
             }
             return null;
