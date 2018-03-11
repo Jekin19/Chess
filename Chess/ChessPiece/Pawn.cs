@@ -4,9 +4,7 @@ using Chess.Helpers;
 namespace Chess.ChessPiece
 {
     public class Pawn : PhoneChessBase, IPhoneNumberFinder
-    {
-       
-
+    {      
         protected override HashSet<string> GetNextState(int row, int col, string [,] phoneMatrix, IRuleEngine ruleEngine)
         {
             HashSet<string> set = new HashSet<string>();

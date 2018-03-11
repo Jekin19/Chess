@@ -5,7 +5,7 @@ namespace Chess.Helpers
 {
     public static class StateHelper
     {
-        public static HashSet<string> GetState(this IBishop bishop, int row, int col, string [,] phoneMatrix, IRuleEngine ruleEngine)
+        public static HashSet<string> GetNextState(this IBishop bishop, int row, int col, string [,] phoneMatrix, IRuleEngine ruleEngine)
         {
             HashSet<string> set = new HashSet<string>();
 
@@ -26,7 +26,7 @@ namespace Chess.Helpers
             return set;
         }
 
-        public static HashSet<string> GetState(this IRook rook, int row, int col, string[,] phoneMatrix, IRuleEngine ruleEngine)
+        public static HashSet<string> GetNextState(this IRook rook, int row, int col, string[,] phoneMatrix, IRuleEngine ruleEngine)
         {
             HashSet<string> set = new HashSet<string>();
 

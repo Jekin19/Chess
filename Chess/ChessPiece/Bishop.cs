@@ -8,13 +8,12 @@ namespace Chess.ChessPiece
 
         protected override HashSet<string> GetNextState(int row, int col, string[,] phoneMatrix, IRuleEngine ruleEngine)
         {
-            return GetMyState(row, col, phoneMatrix, ruleEngine);
+            return GetNextStates(row, col, phoneMatrix, ruleEngine);
         }
 
-
-        public HashSet<string> GetMyState(int row, int col, string[,] phoneMatrix, IRuleEngine ruleEngine)
+        public HashSet<string> GetNextStates(int row, int col, string[,] phoneMatrix, IRuleEngine ruleEngine)
         {
-          return this.GetState(row, col, phoneMatrix, ruleEngine);
+          return StateHelper.GetNextState(this, row, col, phoneMatrix, ruleEngine);
         }
         
     }

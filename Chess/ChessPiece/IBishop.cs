@@ -4,6 +4,6 @@ namespace Chess.ChessPiece
 {
     public interface IBishop
     {
-        HashSet<string> GetMyState(int row, int col, string[,] phoneMatrix, IRuleEngine ruleEngine);
+        HashSet<string> GetNextStates(int row, int col, string[,] phoneMatrix, IRuleEngine ruleEngine);
     }
 }
