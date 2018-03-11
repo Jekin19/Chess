@@ -10,12 +10,13 @@ namespace Chess
         #region Members
         
         private readonly Dictionary<string, HashSet<string>> _states = new Dictionary<string, HashSet<string>>();
-        
-        #endregion   
+
+        #endregion
 
         /**
-         * Returns number of possible paths starting from given digit of size n
+         * Returns all number of possible paths of size phoneLength
          *
+         * @param phoneMatrix     Input Matrix
          * @param phoneLength     Path size
          * @return Number of paths
          */
@@ -49,8 +50,9 @@ namespace Chess
         /**
          * Find number of possible paths starting from given digit of size n
          *
-         * @param digit Starting digit
-         * @param n     Path size
+         * @param phoneMatrix     Input Matrix
+         * @param phoneLength     Path size
+         * @param digit           Starting digit
          * @return Number of paths
          */
         public int FindNumberOfPaths(string[,] phoneMatrix, int phoneLength, string startingDigit)
@@ -85,8 +87,7 @@ namespace Chess
                     foreach (var state in states)
                     {
                         Stack<string> newPath = new Stack<string>();
-                        var temp = path.Reverse();
-                        temp.ToList().ForEach(p => newPath.Push(p));
+                        path.ToList().ForEach(p => newPath.Push(p));
                         newPath.Push(state);
                         queue.Enqueue(newPath);
                     }
@@ -95,11 +96,12 @@ namespace Chess
             return results.Count;
          
         }
-        
+
         /**
          * Returns possible next states for a given digit; use memoization for optimization
          *
-         * @param digit Digit
+         * @param phoneMatrix     Input Matrix
+         * @param digit           Digit
          * @return All possible states
          */
         private HashSet<string> GetStates(string[,] phoneMatrix, string digit)
@@ -128,12 +130,14 @@ namespace Chess
             _states.Add(digit, nextStates);
             return _states[digit];
         }
-        
+
         /**
          * This method returns the possible states for a given digit
          *
          * @param row   Row index for the given digit
          * @param col   Column index for the given digit
+         * @param phoneMatrix     Input Matrix
+         * @param ruleEngine      Rules to comply for valid phone number
          * @return HashSet of possible states
          */
         protected abstract HashSet<string> GetNextState(int row, int col, string[,] phoneMatrix, IRuleEngine ruleEngine);

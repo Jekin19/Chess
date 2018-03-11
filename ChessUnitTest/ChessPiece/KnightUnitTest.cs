@@ -7,10 +7,13 @@ namespace ChessUnitTest.ChessPiece
     [TestClass]
     public class KnightUnitTest
     {
-        private readonly string[,] _phoneMatrix = { {"1", "2", "3"},
-            {"4", "5", "6"},
-            {"7", "8", "9"},
-            {"*", "0", "#"}};
+        private readonly string[,] _phoneMatrix =
+        {
+            {"1", "2", "3", "4"},
+            {"5", "6", "7", "8"},
+            {"9", "0", "*", "#"}
+
+        };
 
         private readonly IPhoneNumberFinder _chessPiece = new Knight();
 
@@ -39,7 +42,7 @@ namespace ChessUnitTest.ChessPiece
             }
             Assert.AreEqual(total, _chessPiece.FindAllNumberOfPaths(_phoneMatrix, 3));
 
-            Assert.AreEqual(16, _chessPiece.FindAllNumberOfPaths(_phoneMatrix, 2));
+            Assert.AreEqual(13, _chessPiece.FindAllNumberOfPaths(_phoneMatrix, 2));
 
         }
 
